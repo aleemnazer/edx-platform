@@ -9,3 +9,5 @@ from openedx.core.djangoapps.waffle_utils import WaffleSwitch, WaffleSwitchNames
 
 
 ENFORCE_JWT_SCOPES = WaffleSwitch(WaffleSwitchNamespace(name=OAUTH_TOGGLE_NAMESPACE), SWITCH_ENFORCE_JWT_SCOPES)
+
+DISABLE_DOP_ADAPTER = WaffleSwitch(WaffleSwitchNamespace(name=OAUTH_TOGGLE_NAMESPACE), 'disable_dop_adapter')

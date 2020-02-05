@@ -18,7 +18,7 @@ from oauth2_provider import models as dot_models
 from organizations.tests.factories import OrganizationFactory
 from provider import constants
 
-from openedx.core.djangoapps.oauth_dispatch.toggles import ENFORCE_JWT_SCOPES
+from openedx.core.djangoapps.oauth_dispatch.toggles import DISABLE_DOP_ADAPTER, ENFORCE_JWT_SCOPES
 from student.tests.factories import UserFactory
 from third_party_auth.tests.utils import ThirdPartyOAuthTestMixin, ThirdPartyOAuthTestMixinGoogle
 
@@ -640,6 +640,11 @@ class TestViewDispatch(TestCase):
     def test_get_view_for_no_backend(self):
         view_object = views.AccessTokenView()
         self.assertRaises(KeyError, view_object.get_view_for_backend, None)
+
+    def test_dop_toggle_enforced(self):
+        with DISABLE_DOP_ADAPTER.override(True):
+            request = self._get_request('dop-id')
+            self.assertEqual(self.view.select_backend(request), self.dot_adapter.backend)
 
 
 class TestRevokeTokenView(AccessTokenLoginMixin, _DispatchingViewTestCase):  # pylint: disable=abstract-method

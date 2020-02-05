@@ -20,6 +20,7 @@ from openedx.core.djangoapps.auth_exchange import views as auth_exchange_views
 from openedx.core.djangoapps.oauth_dispatch import adapters
 from openedx.core.djangoapps.oauth_dispatch.dot_overrides import views as dot_overrides_views
 from openedx.core.djangoapps.oauth_dispatch.jwt import create_jwt_from_token
+from openedx.core.djangoapps.oauth_dispatch.toggles import DISABLE_DOP_ADAPTER
 
 
 class _DispatchingView(View):
@@ -39,7 +40,7 @@ class _DispatchingView(View):
         client_id = self._get_client_id(request)
         monitoring_utils.set_custom_metric('oauth_client_id', client_id)
 
-        if dot_models.Application.objects.filter(client_id=client_id).exists():
+        if dot_models.Application.objects.filter(client_id=client_id).exists() or DISABLE_DOP_ADAPTER.is_enabled():
             monitoring_utils.set_custom_metric('oauth_adapter', 'dot')
             return self.dot_adapter
         else:
